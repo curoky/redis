@@ -1,0 +1,6 @@
+default_stages: [commit]
+repos:
+  - repo: https://gist.github.com/curoky/cd141455853d28e61b61e54220a7eaa5
+    rev: 'ddf614bb4efa153e3b9211a3831875ad297f411c'
+    hooks:
+      - id: clang-format
