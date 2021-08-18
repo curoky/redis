@@ -15,7 +15,7 @@
 release_hdr := $(shell sh -c './mkreleasehdr.sh')
 uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
 uname_M := $(shell sh -c 'uname -m 2>/dev/null || echo not')
-OPTIMIZATION?=-O2
+OPTIMIZATION?=-O0
 DEPENDENCY_TARGETS=hiredis linenoise lua hdr_histogram
 NODEPS:=clean distclean
 
@@ -41,7 +41,7 @@ C11_ATOMIC := $(shell sh -c 'echo "\#include <stdatomic.h>" > foo.c; \
 ifeq ($(C11_ATOMIC),yes)
 	STD+=-std=c11
 else
-	STD+=-std=c99
+	STD+=-std=c11
 endif
 
 PREFIX?=/usr/local
@@ -84,7 +84,7 @@ endif
 ifeq ($(USE_JEMALLOC),no)
 	MALLOC=libc
 endif
-
+MALLOC=libc
 # Override default settings if possible
 -include .make-settings
 
@@ -252,6 +252,19 @@ endif
 	FINAL_LIBS += ../deps/hiredis/libhiredis_ssl.a $(LIBSSL_LIBS) $(LIBCRYPTO_LIBS)
 endif
 
+FINAL_CFLAGS+= -D_POSIX_C_SOURCE=199506L
+FINAL_CFLAGS+= -D_XOPEN_SOURCE=700
+FINAL_CFLAGS+= -D_DEFAULT_SOURCE
+FINAL_CFLAGS+= -D_BSD_SOURCE
+FINAL_CFLAGS+= -D_GNU_SOURCE
+# FINAL_CFLAGS+= -D__USE_GNU
+# FINAL_CFLAGS+= -D__USE_XOPEN
+
+# ignore warning
+FINAL_CFLAGS+= -Wno-int-conversion
+FINAL_CFLAGS+= -Wno-incompatible-pointer-types
+FINAL_CFLAGS+= -Wno-implicit-function-declaration
+
 ifndef V
     define MAKE_INSTALL
         @printf '    %b %b\n' $(LINKCOLOR)INSTALL$(ENDCOLOR) $(BINCOLOR)$(1)$(ENDCOLOR) 1>&2
@@ -290,7 +303,7 @@ REDIS_BENCHMARK_OBJ=ae.o anet.o redis-benchmark.o adlist.o dict.o zmalloc.o rele
 REDIS_CHECK_RDB_NAME=redis-check-rdb$(PROG_SUFFIX)
 REDIS_CHECK_AOF_NAME=redis-check-aof$(PROG_SUFFIX)
 
-all: $(REDIS_SERVER_NAME) $(REDIS_SENTINEL_NAME) $(REDIS_CLI_NAME) $(REDIS_BENCHMARK_NAME) $(REDIS_CHECK_RDB_NAME) $(REDIS_CHECK_AOF_NAME)
+all: $(REDIS_SERVER_NAME) $(REDIS_CLI_NAME)
 	@echo ""
 	@echo "Hint: It's a good idea to run 'make test' ;)"
 	@echo ""
@@ -368,7 +381,7 @@ DEP = $(REDIS_SERVER_OBJ:%.o=%.d) $(REDIS_CLI_OBJ:%.o=%.d) $(REDIS_BENCHMARK_OBJ
 	$(REDIS_CC) -MMD -o $@ -c $<
 
 clean:
-	rm -rf $(REDIS_SERVER_NAME) $(REDIS_SENTINEL_NAME) $(REDIS_CLI_NAME) $(REDIS_BENCHMARK_NAME) $(REDIS_CHECK_RDB_NAME) $(REDIS_CHECK_AOF_NAME) *.o *.gcda *.gcno *.gcov redis.info lcov-html Makefile.dep
+	rm -rf $(REDIS_SERVER_NAME) $(REDIS_SENTINEL_NAME) $(REDIS_CLI_NAME) $(REDIS_CHECK_RDB_NAME) $(REDIS_CHECK_AOF_NAME) *.o *.gcda *.gcno *.gcov redis.info lcov-html Makefile.dep
 	rm -f $(DEP)
 
 .PHONY: clean
