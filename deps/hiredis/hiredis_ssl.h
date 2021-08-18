@@ -51,12 +51,12 @@ typedef struct redisSSLContext redisSSLContext;
  */
 
 typedef enum {
-    REDIS_SSL_CTX_NONE = 0,                     /* No Error */
-    REDIS_SSL_CTX_CREATE_FAILED,                /* Failed to create OpenSSL SSL_CTX */
-    REDIS_SSL_CTX_CERT_KEY_REQUIRED,            /* Client cert and key must both be specified or skipped */
-    REDIS_SSL_CTX_CA_CERT_LOAD_FAILED,          /* Failed to load CA Certificate or CA Path */
-    REDIS_SSL_CTX_CLIENT_CERT_LOAD_FAILED,      /* Failed to load client certificate */
-    REDIS_SSL_CTX_PRIVATE_KEY_LOAD_FAILED       /* Failed to load private key */
+  REDIS_SSL_CTX_NONE = 0,                /* No Error */
+  REDIS_SSL_CTX_CREATE_FAILED,           /* Failed to create OpenSSL SSL_CTX */
+  REDIS_SSL_CTX_CERT_KEY_REQUIRED,       /* Client cert and key must both be specified or skipped */
+  REDIS_SSL_CTX_CA_CERT_LOAD_FAILED,     /* Failed to load CA Certificate or CA Path */
+  REDIS_SSL_CTX_CLIENT_CERT_LOAD_FAILED, /* Failed to load client certificate */
+  REDIS_SSL_CTX_PRIVATE_KEY_LOAD_FAILED  /* Failed to load private key */
 } redisSSLContextError;
 
 /**
@@ -96,8 +96,8 @@ int redisInitOpenSSL(void);
  */
 
 redisSSLContext *redisCreateSSLContext(const char *cacert_filename, const char *capath,
-        const char *cert_filename, const char *private_key_filename,
-        const char *server_name, redisSSLContextError *error);
+                                       const char *cert_filename, const char *private_key_filename,
+                                       const char *server_name, redisSSLContextError *error);
 
 /**
  * Free a previously created OpenSSL context.
@@ -124,4 +124,4 @@ int redisInitiateSSL(redisContext *c, struct ssl_st *ssl);
 }
 #endif
 
-#endif  /* __HIREDIS_SSL_H */
+#endif /* __HIREDIS_SSL_H */

@@ -31,18 +31,19 @@
 #define __REDIS_UTIL_H
 
 #include <stdint.h>
+
 #include "sds.h"
 
 /* The maximum number of characters needed to represent a long double
  * as a string (long double has a huge range).
  * This should be the size of the buffer given to ld2string */
-#define MAX_LONG_DOUBLE_CHARS 5*1024
+#define MAX_LONG_DOUBLE_CHARS 5 * 1024
 
 /* long double to string convertion options */
 typedef enum {
-    LD_STR_AUTO,     /* %.17Lg */
-    LD_STR_HUMAN,    /* %.17Lf + Trimming of trailing zeros */
-    LD_STR_HEX       /* %La */
+  LD_STR_AUTO,  /* %.17Lg */
+  LD_STR_HUMAN, /* %.17Lf + Trimming of trailing zeros */
+  LD_STR_HEX    /* %La */
 } ld2string_mode;
 
 int stringmatchlen(const char *p, int plen, const char *s, int slen, int nocase);

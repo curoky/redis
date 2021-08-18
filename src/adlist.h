@@ -34,23 +34,23 @@
 /* Node, List, and Iterator are the only data structures used currently. */
 
 typedef struct listNode {
-    struct listNode *prev;
-    struct listNode *next;
-    void *value;
+  struct listNode *prev;
+  struct listNode *next;
+  void *value;
 } listNode;
 
 typedef struct listIter {
-    listNode *next;
-    int direction;
+  listNode *next;
+  int direction;
 } listIter;
 
 typedef struct list {
-    listNode *head;
-    listNode *tail;
-    void *(*dup)(void *ptr);
-    void (*free)(void *ptr);
-    int (*match)(void *ptr, void *key);
-    unsigned long len;
+  listNode *head;
+  listNode *tail;
+  void *(*dup)(void *ptr);
+  void (*free)(void *ptr);
+  int (*match)(void *ptr, void *key);
+  unsigned long len;
 } list;
 
 /* Functions implemented as macros */
@@ -61,9 +61,9 @@ typedef struct list {
 #define listNextNode(n) ((n)->next)
 #define listNodeValue(n) ((n)->value)
 
-#define listSetDupMethod(l,m) ((l)->dup = (m))
-#define listSetFreeMethod(l,m) ((l)->free = (m))
-#define listSetMatchMethod(l,m) ((l)->match = (m))
+#define listSetDupMethod(l, m) ((l)->dup = (m))
+#define listSetFreeMethod(l, m) ((l)->free = (m))
+#define listSetMatchMethod(l, m) ((l)->match = (m))
 
 #define listGetDupMethod(l) ((l)->dup)
 #define listGetFreeMethod(l) ((l)->free)

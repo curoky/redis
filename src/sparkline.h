@@ -32,15 +32,15 @@
 
 /* A sequence is represented of many "samples" */
 struct sample {
-    double value;
-    char *label;
+  double value;
+  char *label;
 };
 
 struct sequence {
-    int length;
-    int labels;
-    struct sample *samples;
-    double min, max;
+  int length;
+  int labels;
+  struct sample *samples;
+  double min, max;
 };
 
 #define SPARKLINE_NO_FLAGS 0
@@ -50,7 +50,8 @@ struct sequence {
 struct sequence *createSparklineSequence(void);
 void sparklineSequenceAddSample(struct sequence *seq, double value, char *label);
 void freeSparklineSequence(struct sequence *seq);
-sds sparklineRenderRange(sds output, struct sequence *seq, int rows, int offset, int len, int flags);
+sds sparklineRenderRange(sds output, struct sequence *seq, int rows, int offset, int len,
+                         int flags);
 sds sparklineRender(sds output, struct sequence *seq, int columns, int rows, int flags);
 
 #endif /* __SPARKLINE_H */

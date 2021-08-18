@@ -38,219 +38,202 @@
  */
 
 #define REDISMODULE_EXPERIMENTAL_API
-#include "redismodule.h"
 #include <pthread.h>
+
+#include "redismodule.h"
 
 /* Timer callback. */
 void timerHandler(RedisModuleCtx *ctx, void *data) {
-    REDISMODULE_NOT_USED(ctx);
-    REDISMODULE_NOT_USED(data);
+  REDISMODULE_NOT_USED(ctx);
+  REDISMODULE_NOT_USED(data);
 
-    static int times = 0;
+  static int times = 0;
 
-    RedisModule_Replicate(ctx,"INCR","c","timer");
-    times++;
+  RedisModule_Replicate(ctx, "INCR", "c", "timer");
+  times++;
 
-    if (times < 3)
-        RedisModule_CreateTimer(ctx,100,timerHandler,NULL);
-    else
-        times = 0;
+  if (times < 3)
+    RedisModule_CreateTimer(ctx, 100, timerHandler, NULL);
+  else
+    times = 0;
 }
 
-int propagateTestTimerCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
-{
-    REDISMODULE_NOT_USED(argv);
-    REDISMODULE_NOT_USED(argc);
+int propagateTestTimerCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
+  REDISMODULE_NOT_USED(argv);
+  REDISMODULE_NOT_USED(argc);
 
-    RedisModuleTimerID timer_id =
-        RedisModule_CreateTimer(ctx,100,timerHandler,NULL);
-    REDISMODULE_NOT_USED(timer_id);
+  RedisModuleTimerID timer_id = RedisModule_CreateTimer(ctx, 100, timerHandler, NULL);
+  REDISMODULE_NOT_USED(timer_id);
 
-    RedisModule_ReplyWithSimpleString(ctx,"OK");
-    return REDISMODULE_OK;
+  RedisModule_ReplyWithSimpleString(ctx, "OK");
+  return REDISMODULE_OK;
 }
 
 /* Timer callback. */
 void timerNestedHandler(RedisModuleCtx *ctx, void *data) {
-    int repl = (long long)data;
+  int repl = (long long)data;
 
-    /* The goal is the trigger a module command that calls RM_Replicate
-     * in order to test MULTI/EXEC structre */
-    RedisModule_Replicate(ctx,"INCRBY","cc","timer-nested-start","1");
-    RedisModuleCallReply *reply = RedisModule_Call(ctx,"propagate-test.nested", repl? "!" : "");
-    RedisModule_FreeCallReply(reply);
-    RedisModule_Replicate(ctx,"INCRBY","cc","timer-nested-end","1");
+  /* The goal is the trigger a module command that calls RM_Replicate
+   * in order to test MULTI/EXEC structre */
+  RedisModule_Replicate(ctx, "INCRBY", "cc", "timer-nested-start", "1");
+  RedisModuleCallReply *reply = RedisModule_Call(ctx, "propagate-test.nested", repl ? "!" : "");
+  RedisModule_FreeCallReply(reply);
+  RedisModule_Replicate(ctx, "INCRBY", "cc", "timer-nested-end", "1");
 }
 
-int propagateTestTimerNestedCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
-{
-    REDISMODULE_NOT_USED(argv);
-    REDISMODULE_NOT_USED(argc);
+int propagateTestTimerNestedCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
+  REDISMODULE_NOT_USED(argv);
+  REDISMODULE_NOT_USED(argc);
 
-    RedisModuleTimerID timer_id =
-        RedisModule_CreateTimer(ctx,100,timerNestedHandler,(void*)0);
-    REDISMODULE_NOT_USED(timer_id);
+  RedisModuleTimerID timer_id = RedisModule_CreateTimer(ctx, 100, timerNestedHandler, (void *)0);
+  REDISMODULE_NOT_USED(timer_id);
 
-    RedisModule_ReplyWithSimpleString(ctx,"OK");
-    return REDISMODULE_OK;
+  RedisModule_ReplyWithSimpleString(ctx, "OK");
+  return REDISMODULE_OK;
 }
 
-int propagateTestTimerNestedReplCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
-{
-    REDISMODULE_NOT_USED(argv);
-    REDISMODULE_NOT_USED(argc);
+int propagateTestTimerNestedReplCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
+  REDISMODULE_NOT_USED(argv);
+  REDISMODULE_NOT_USED(argc);
 
-    RedisModuleTimerID timer_id =
-        RedisModule_CreateTimer(ctx,100,timerNestedHandler,(void*)1);
-    REDISMODULE_NOT_USED(timer_id);
+  RedisModuleTimerID timer_id = RedisModule_CreateTimer(ctx, 100, timerNestedHandler, (void *)1);
+  REDISMODULE_NOT_USED(timer_id);
 
-    RedisModule_ReplyWithSimpleString(ctx,"OK");
-    return REDISMODULE_OK;
+  RedisModule_ReplyWithSimpleString(ctx, "OK");
+  return REDISMODULE_OK;
 }
 
 /* The thread entry point. */
 void *threadMain(void *arg) {
-    REDISMODULE_NOT_USED(arg);
-    RedisModuleCtx *ctx = RedisModule_GetThreadSafeContext(NULL);
-    RedisModule_SelectDb(ctx,9); /* Tests ran in database number 9. */
-    for (int i = 0; i < 3; i++) {
-        RedisModule_ThreadSafeContextLock(ctx);
-        RedisModule_Replicate(ctx,"INCR","c","a-from-thread");
-        RedisModule_Replicate(ctx,"INCR","c","b-from-thread");
-        RedisModule_ThreadSafeContextUnlock(ctx);
-    }
-    RedisModule_FreeThreadSafeContext(ctx);
-    return NULL;
+  REDISMODULE_NOT_USED(arg);
+  RedisModuleCtx *ctx = RedisModule_GetThreadSafeContext(NULL);
+  RedisModule_SelectDb(ctx, 9); /* Tests ran in database number 9. */
+  for (int i = 0; i < 3; i++) {
+    RedisModule_ThreadSafeContextLock(ctx);
+    RedisModule_Replicate(ctx, "INCR", "c", "a-from-thread");
+    RedisModule_Replicate(ctx, "INCR", "c", "b-from-thread");
+    RedisModule_ThreadSafeContextUnlock(ctx);
+  }
+  RedisModule_FreeThreadSafeContext(ctx);
+  return NULL;
 }
 
-int propagateTestThreadCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
-{
-    REDISMODULE_NOT_USED(argv);
-    REDISMODULE_NOT_USED(argc);
+int propagateTestThreadCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
+  REDISMODULE_NOT_USED(argv);
+  REDISMODULE_NOT_USED(argc);
 
-    pthread_t tid;
-    if (pthread_create(&tid,NULL,threadMain,NULL) != 0)
-        return RedisModule_ReplyWithError(ctx,"-ERR Can't start thread");
-    REDISMODULE_NOT_USED(tid);
+  pthread_t tid;
+  if (pthread_create(&tid, NULL, threadMain, NULL) != 0)
+    return RedisModule_ReplyWithError(ctx, "-ERR Can't start thread");
+  REDISMODULE_NOT_USED(tid);
 
-    RedisModule_ReplyWithSimpleString(ctx,"OK");
-    return REDISMODULE_OK;
+  RedisModule_ReplyWithSimpleString(ctx, "OK");
+  return REDISMODULE_OK;
 }
 
-int propagateTestSimpleCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
-{
-    REDISMODULE_NOT_USED(argv);
-    REDISMODULE_NOT_USED(argc);
+int propagateTestSimpleCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
+  REDISMODULE_NOT_USED(argv);
+  REDISMODULE_NOT_USED(argc);
 
-    /* Replicate two commands to test MULTI/EXEC wrapping. */
-    RedisModule_Replicate(ctx,"INCR","c","counter-1");
-    RedisModule_Replicate(ctx,"INCR","c","counter-2");
-    RedisModule_ReplyWithSimpleString(ctx,"OK");
-    return REDISMODULE_OK;
+  /* Replicate two commands to test MULTI/EXEC wrapping. */
+  RedisModule_Replicate(ctx, "INCR", "c", "counter-1");
+  RedisModule_Replicate(ctx, "INCR", "c", "counter-2");
+  RedisModule_ReplyWithSimpleString(ctx, "OK");
+  return REDISMODULE_OK;
 }
 
-int propagateTestMixedCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
-{
-    REDISMODULE_NOT_USED(argv);
-    REDISMODULE_NOT_USED(argc);
-    RedisModuleCallReply *reply;
+int propagateTestMixedCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
+  REDISMODULE_NOT_USED(argv);
+  REDISMODULE_NOT_USED(argc);
+  RedisModuleCallReply *reply;
 
-    /* This test mixes multiple propagation systems. */
-    reply = RedisModule_Call(ctx, "INCR", "c!", "using-call");
-    RedisModule_FreeCallReply(reply);
+  /* This test mixes multiple propagation systems. */
+  reply = RedisModule_Call(ctx, "INCR", "c!", "using-call");
+  RedisModule_FreeCallReply(reply);
 
-    RedisModule_Replicate(ctx,"INCR","c","counter-1");
-    RedisModule_Replicate(ctx,"INCR","c","counter-2");
+  RedisModule_Replicate(ctx, "INCR", "c", "counter-1");
+  RedisModule_Replicate(ctx, "INCR", "c", "counter-2");
 
-    reply = RedisModule_Call(ctx, "INCR", "c!", "after-call");
-    RedisModule_FreeCallReply(reply);
+  reply = RedisModule_Call(ctx, "INCR", "c!", "after-call");
+  RedisModule_FreeCallReply(reply);
 
-    RedisModule_ReplyWithSimpleString(ctx,"OK");
-    return REDISMODULE_OK;
+  RedisModule_ReplyWithSimpleString(ctx, "OK");
+  return REDISMODULE_OK;
 }
 
-int propagateTestNestedCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
-{
-    REDISMODULE_NOT_USED(argv);
-    REDISMODULE_NOT_USED(argc);
-    RedisModuleCallReply *reply;
+int propagateTestNestedCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
+  REDISMODULE_NOT_USED(argv);
+  REDISMODULE_NOT_USED(argc);
+  RedisModuleCallReply *reply;
 
-    /* This test mixes multiple propagation systems. */
-    reply = RedisModule_Call(ctx, "INCR", "c!", "using-call");
-    RedisModule_FreeCallReply(reply);
+  /* This test mixes multiple propagation systems. */
+  reply = RedisModule_Call(ctx, "INCR", "c!", "using-call");
+  RedisModule_FreeCallReply(reply);
 
-    reply = RedisModule_Call(ctx,"propagate-test.simple", "!");
-    RedisModule_FreeCallReply(reply);
+  reply = RedisModule_Call(ctx, "propagate-test.simple", "!");
+  RedisModule_FreeCallReply(reply);
 
-    RedisModule_Replicate(ctx,"INCR","c","counter-3");
-    RedisModule_Replicate(ctx,"INCR","c","counter-4");
+  RedisModule_Replicate(ctx, "INCR", "c", "counter-3");
+  RedisModule_Replicate(ctx, "INCR", "c", "counter-4");
 
-    reply = RedisModule_Call(ctx, "INCR", "c!", "after-call");
-    RedisModule_FreeCallReply(reply);
+  reply = RedisModule_Call(ctx, "INCR", "c!", "after-call");
+  RedisModule_FreeCallReply(reply);
 
-    RedisModule_ReplyWithSimpleString(ctx,"OK");
-    return REDISMODULE_OK;
+  RedisModule_ReplyWithSimpleString(ctx, "OK");
+  return REDISMODULE_OK;
 }
 
-int propagateTestIncr(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
-{
-    REDISMODULE_NOT_USED(argc);
-    RedisModuleCallReply *reply;
+int propagateTestIncr(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
+  REDISMODULE_NOT_USED(argc);
+  RedisModuleCallReply *reply;
 
-    /* This test propagates the module command, not the INCR it executes. */
-    reply = RedisModule_Call(ctx, "INCR", "s", argv[1]);
-    RedisModule_ReplyWithCallReply(ctx,reply);
-    RedisModule_FreeCallReply(reply);
-    RedisModule_ReplicateVerbatim(ctx);
-    return REDISMODULE_OK;
+  /* This test propagates the module command, not the INCR it executes. */
+  reply = RedisModule_Call(ctx, "INCR", "s", argv[1]);
+  RedisModule_ReplyWithCallReply(ctx, reply);
+  RedisModule_FreeCallReply(reply);
+  RedisModule_ReplicateVerbatim(ctx);
+  return REDISMODULE_OK;
 }
 
 int RedisModule_OnLoad(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
-    REDISMODULE_NOT_USED(argv);
-    REDISMODULE_NOT_USED(argc);
+  REDISMODULE_NOT_USED(argv);
+  REDISMODULE_NOT_USED(argc);
 
-    if (RedisModule_Init(ctx,"propagate-test",1,REDISMODULE_APIVER_1)
-            == REDISMODULE_ERR) return REDISMODULE_ERR;
+  if (RedisModule_Init(ctx, "propagate-test", 1, REDISMODULE_APIVER_1) == REDISMODULE_ERR)
+    return REDISMODULE_ERR;
 
-    if (RedisModule_CreateCommand(ctx,"propagate-test.timer",
-                propagateTestTimerCommand,
-                "",1,1,1) == REDISMODULE_ERR)
-            return REDISMODULE_ERR;
+  if (RedisModule_CreateCommand(ctx, "propagate-test.timer", propagateTestTimerCommand, "", 1, 1,
+                                1) == REDISMODULE_ERR)
+    return REDISMODULE_ERR;
 
-    if (RedisModule_CreateCommand(ctx,"propagate-test.timer-nested",
-                propagateTestTimerNestedCommand,
-                "",1,1,1) == REDISMODULE_ERR)
-            return REDISMODULE_ERR;
+  if (RedisModule_CreateCommand(ctx, "propagate-test.timer-nested", propagateTestTimerNestedCommand,
+                                "", 1, 1, 1) == REDISMODULE_ERR)
+    return REDISMODULE_ERR;
 
-    if (RedisModule_CreateCommand(ctx,"propagate-test.timer-nested-repl",
-                propagateTestTimerNestedReplCommand,
-                "",1,1,1) == REDISMODULE_ERR)
-            return REDISMODULE_ERR;
+  if (RedisModule_CreateCommand(ctx, "propagate-test.timer-nested-repl",
+                                propagateTestTimerNestedReplCommand, "", 1, 1,
+                                1) == REDISMODULE_ERR)
+    return REDISMODULE_ERR;
 
-    if (RedisModule_CreateCommand(ctx,"propagate-test.thread",
-                propagateTestThreadCommand,
-                "",1,1,1) == REDISMODULE_ERR)
-            return REDISMODULE_ERR;
+  if (RedisModule_CreateCommand(ctx, "propagate-test.thread", propagateTestThreadCommand, "", 1, 1,
+                                1) == REDISMODULE_ERR)
+    return REDISMODULE_ERR;
 
-    if (RedisModule_CreateCommand(ctx,"propagate-test.simple",
-                propagateTestSimpleCommand,
-                "",1,1,1) == REDISMODULE_ERR)
-            return REDISMODULE_ERR;
+  if (RedisModule_CreateCommand(ctx, "propagate-test.simple", propagateTestSimpleCommand, "", 1, 1,
+                                1) == REDISMODULE_ERR)
+    return REDISMODULE_ERR;
 
-    if (RedisModule_CreateCommand(ctx,"propagate-test.mixed",
-                propagateTestMixedCommand,
-                "",1,1,1) == REDISMODULE_ERR)
-            return REDISMODULE_ERR;
+  if (RedisModule_CreateCommand(ctx, "propagate-test.mixed", propagateTestMixedCommand, "", 1, 1,
+                                1) == REDISMODULE_ERR)
+    return REDISMODULE_ERR;
 
-    if (RedisModule_CreateCommand(ctx,"propagate-test.nested",
-                propagateTestNestedCommand,
-                "",1,1,1) == REDISMODULE_ERR)
-            return REDISMODULE_ERR;
+  if (RedisModule_CreateCommand(ctx, "propagate-test.nested", propagateTestNestedCommand, "", 1, 1,
+                                1) == REDISMODULE_ERR)
+    return REDISMODULE_ERR;
 
-    if (RedisModule_CreateCommand(ctx,"propagate-test.incr",
-                propagateTestIncr,
-                "",1,1,1) == REDISMODULE_ERR)
-            return REDISMODULE_ERR;
+  if (RedisModule_CreateCommand(ctx, "propagate-test.incr", propagateTestIncr, "", 1, 1, 1) ==
+      REDISMODULE_ERR)
+    return REDISMODULE_ERR;
 
-    return REDISMODULE_OK;
+  return REDISMODULE_OK;
 }

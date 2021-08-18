@@ -49,9 +49,7 @@
  * In other cases where we don't want to prematurely lose the connection,
  * it can go beyond 1 as well; currently it is only done by connAccept().
  */
-static inline void connIncrRefs(connection *conn) {
-    conn->refs++;
-}
+static inline void connIncrRefs(connection *conn) { conn->refs++; }
 
 /* Decrement connection references.
  *
@@ -61,13 +59,9 @@ static inline void connIncrRefs(connection *conn) {
  * that.
  */
 
-static inline void connDecrRefs(connection *conn) {
-    conn->refs--;
-}
+static inline void connDecrRefs(connection *conn) { conn->refs--; }
 
-static inline int connHasRefs(connection *conn) {
-    return conn->refs;
-}
+static inline int connHasRefs(connection *conn) { return conn->refs; }
 
 /* Helper for connection implementations to call handlers:
  * 1. Increment refs to protect the connection.
@@ -75,14 +69,14 @@ static inline int connHasRefs(connection *conn) {
  * 3. Decrement refs and perform deferred close, if refs==0.
  */
 static inline int callHandler(connection *conn, ConnectionCallbackFunc handler) {
-    connIncrRefs(conn);
-    if (handler) handler(conn);
-    connDecrRefs(conn);
-    if (conn->flags & CONN_FLAG_CLOSE_SCHEDULED) {
-        if (!connHasRefs(conn)) connClose(conn);
-        return 0;
-    }
-    return 1;
+  connIncrRefs(conn);
+  if (handler) handler(conn);
+  connDecrRefs(conn);
+  if (conn->flags & CONN_FLAG_CLOSE_SCHEDULED) {
+    if (!connHasRefs(conn)) connClose(conn);
+    return 0;
+  }
+  return 1;
 }
 
-#endif  /* __REDIS_CONNHELPERS_H */
+#endif /* __REDIS_CONNHELPERS_H */

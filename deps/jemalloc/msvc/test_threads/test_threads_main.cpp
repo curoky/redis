@@ -1,7 +1,8 @@
-#include "test_threads.h"
-#include <future>
-#include <functional>
 #include <chrono>
+#include <functional>
+#include <future>
+
+#include "test_threads.h"
 
 using namespace std::chrono_literals;
 
