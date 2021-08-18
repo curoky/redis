@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "fmacros.h"
+
 #include <ctype.h>
 #include <lauxlib.h>
 #include <lua.h>

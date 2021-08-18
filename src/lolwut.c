@@ -32,11 +32,11 @@
  * fun and interesting, and should be replaced by a new implementation at
  * each new version of Redis.
  */
-
-#include "lolwut.h"
+#include "fmacros.h"
 
 #include <math.h>
 
+#include "lolwut.h"
 #include "server.h"
 
 void lolwut5Command(client *c);

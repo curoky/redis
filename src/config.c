@@ -28,7 +28,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "fmacros.h"
+
 #include <fcntl.h>
+#include <limits.h>
 #include <sys/stat.h>
 
 #include "cluster.h"

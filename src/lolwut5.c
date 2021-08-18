@@ -33,6 +33,8 @@
  * each new version of Redis.
  */
 
+#include "fmacros.h"
+
 #include <math.h>
 
 #include "lolwut.h"

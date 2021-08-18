@@ -1,6 +1,17 @@
 #ifndef __CLUSTER_H
 #define __CLUSTER_H
 
+#include "fmacros.h"
+
+#include <sds.h>
+#include <stddef.h>
+#include <stdint.h>
+
+#include "adlist.h"
+#include "connection.h"
+#include "dict.h"
+#include "server.h"
+
 /*-----------------------------------------------------------------------------
  * Redis cluster data structures, defines, exported API.
  *----------------------------------------------------------------------------*/

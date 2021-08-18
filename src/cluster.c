@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "cluster.h"
+#include "fmacros.h"
 
 #include <arpa/inet.h>
 #include <fcntl.h>
@@ -39,6 +39,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "cluster.h"
 #include "endianconv.h"
 #include "server.h"
 

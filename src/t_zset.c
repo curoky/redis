@@ -55,6 +55,7 @@
  * c) there is a back pointer, so it's a doubly linked list with the back
  * pointers being only at "level 1". This allows to traverse the list
  * from tail to head, useful for ZREVRANGE. */
+#include "fmacros.h"
 
 #include <math.h>
 

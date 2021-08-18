@@ -33,6 +33,8 @@
 
 #define CONN_INFO_LEN 32
 
+#include "sds.h"
+
 struct aeEventLoop;
 typedef struct connection connection;
 

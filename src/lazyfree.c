@@ -1,3 +1,5 @@
+#include "fmacros.h"
+
 #include "atomicvar.h"
 #include "bio.h"
 #include "cluster.h"

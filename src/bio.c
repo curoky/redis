@@ -56,9 +56,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#include "fmacros.h"
 
 #include "bio.h"
-
 #include "server.h"
 
 static pthread_t bio_threads[BIO_NUM_OPS];

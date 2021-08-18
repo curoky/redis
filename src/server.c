@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "server.h"
+#include "fmacros.h"
 
 #include <arpa/inet.h>
 #include <assert.h>
@@ -56,6 +56,7 @@
 #include "latency.h"
 #include "monotonic.h"
 #include "mt19937-64.h"
+#include "server.h"
 #include "slowlog.h"
 
 #ifdef __linux__

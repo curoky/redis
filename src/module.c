@@ -50,6 +50,7 @@
  * replacements are done, such as the replacement of RM with RedisModule in
  * function names. For details, see the script src/modules/gendoc.rb.
  * -------------------------------------------------------------------------- */
+#include "fmacros.h"
 
 #include <dlfcn.h>
 #include <sys/stat.h>

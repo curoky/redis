@@ -28,6 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stddef.h>
 #include <stdint.h>  // for UINTPTR_MAX
 
 #ifndef __QUICKLIST_H__

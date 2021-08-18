@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "fmacros.h"
+
 #include "endianconv.h"
 #include "server.h"
 #include "stream.h"

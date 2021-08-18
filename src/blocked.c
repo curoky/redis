@@ -60,6 +60,8 @@
  * clusterRedirectBlockedClientIfNeeded() function should also be updated.
  */
 
+#include "fmacros.h"
+
 #include "latency.h"
 #include "monotonic.h"
 #include "server.h"

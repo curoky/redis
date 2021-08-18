@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "fmacros.h"
+
 #include <stdarg.h>
 #include <sys/time.h>
 #include <unistd.h>

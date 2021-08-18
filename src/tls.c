@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "fmacros.h"
+
 #include "adlist.h"
 #include "connhelpers.h"
 #include "server.h"

@@ -59,22 +59,21 @@
 typedef long long mstime_t; /* millisecond time type. */
 typedef long long ustime_t; /* microsecond time type. */
 
-#include "adlist.h"    /* Linked lists */
-#include "ae.h"        /* Event driven programming library */
-#include "anet.h"      /* Networking the easy way */
-#include "dict.h"      /* Hash tables */
-#include "intset.h"    /* Compact integer set structure */
-#include "latency.h"   /* Latency monitor API */
-#include "quicklist.h" /* Lists are encoded as linked lists of
-#include "sds.h"     /* Dynamic safe strings */
-#include "sparkline.h" /* ASCII graphs API */
-#include "util.h"      /* Misc functions useful in many places */
-#include "version.h"   /* Version macro */
-#include "ziplist.h"   /* Compact list data structure */
-#include "zmalloc.h"   /* total memory usage aware version of malloc/free */
-N - elements flat arrays * /
+#include "adlist.h"     /* Linked lists */
+#include "ae.h"         /* Event driven programming library */
+#include "anet.h"       /* Networking the easy way */
 #include "connection.h" /* Connection abstraction */
+#include "dict.h"       /* Hash tables */
+#include "intset.h"     /* Compact integer set structure */
+#include "latency.h"    /* Latency monitor API */
+#include "quicklist.h"  /* Lists are encoded as linked lists of N - elements flat arrays */
 #include "rax.h"        /* Radix tree */
+#include "sds.h"        /* Dynamic safe strings */
+#include "sparkline.h"  /* ASCII graphs API */
+#include "util.h"       /* Misc functions useful in many places */
+#include "version.h"    /* Version macro */
+#include "ziplist.h"    /* Compact list data structure */
+#include "zmalloc.h"    /* total memory usage aware version of malloc/free */
 
 #define REDISMODULE_CORE 1
 #include "redismodule.h" /* Redis modules API defines. */
@@ -165,7 +164,7 @@ N - elements flat arrays * /
 #define CONFIG_OOM_BGCHILD 2
 #define CONFIG_OOM_COUNT 3
 
-        extern int configOOMScoreAdjValuesDefaults[CONFIG_OOM_COUNT];
+extern int configOOMScoreAdjValuesDefaults[CONFIG_OOM_COUNT];
 
 /* Hash table parameters */
 #define HASHTABLE_MIN_FILL 10           /* Minimal hash table fill 10% */

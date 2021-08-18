@@ -30,8 +30,8 @@
 
 #ifndef __INTSET_H
 #define __INTSET_H
+#include <stddef.h>
 #include <stdint.h>
-
 typedef struct intset {
   uint32_t encoding;
   uint32_t length;
