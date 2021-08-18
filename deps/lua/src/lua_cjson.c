@@ -41,7 +41,7 @@
 #include <math.h>
 #include <string.h>
 
-#include "../../../src/solarisfixes.h"
+// #include "../../../src/solarisfixes.h"
 #include "fpconv.h"
 #include "lauxlib.h"
 #include "lua.h"
