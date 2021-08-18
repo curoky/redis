@@ -30,6 +30,7 @@
 
 #include "quicklist.h"
 
+#include <stddef.h>
 #include <string.h> /* for memcpy */
 
 #include "config.h"

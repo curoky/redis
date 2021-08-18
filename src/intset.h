@@ -30,6 +30,8 @@
 
 #ifndef __INTSET_H
 #define __INTSET_H
+
+#include <stddef.h>
 #include <stdint.h>
 
 typedef struct intset {

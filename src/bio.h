@@ -30,6 +30,8 @@
 #ifndef __BIO_H
 #define __BIO_H
 
+#include <time.h>
+
 typedef void lazy_free_fn(void *args[]);
 
 /* Exported API */
