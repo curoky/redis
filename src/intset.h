@@ -33,9 +33,9 @@
 #include <stdint.h>
 
 typedef struct intset {
-    uint32_t encoding;
-    uint32_t length;
-    int8_t contents[];
+  uint32_t encoding;
+  uint32_t length;
+  int8_t contents[];
 } intset;
 
 intset *intsetNew(void);
@@ -52,4 +52,4 @@ int intsetValidateIntegrity(const unsigned char *is, size_t size, int deep);
 int intsetTest(int argc, char *argv[], int accurate);
 #endif
 
-#endif // __INTSET_H
+#endif  // __INTSET_H

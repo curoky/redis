@@ -35,8 +35,8 @@
 #ifndef __LISTPACK_H
 #define __LISTPACK_H
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #define LP_INTBUF_SIZE 21 /* 20 digits of -2^63 + 1 null term = 21. */
 
@@ -47,8 +47,9 @@
 
 unsigned char *lpNew(size_t capacity);
 void lpFree(unsigned char *lp);
-unsigned char* lpShrinkToFit(unsigned char *lp);
-unsigned char *lpInsert(unsigned char *lp, unsigned char *ele, uint32_t size, unsigned char *p, int where, unsigned char **newp);
+unsigned char *lpShrinkToFit(unsigned char *lp);
+unsigned char *lpInsert(unsigned char *lp, unsigned char *ele, uint32_t size, unsigned char *p,
+                        int where, unsigned char **newp);
 unsigned char *lpAppend(unsigned char *lp, unsigned char *ele, uint32_t size);
 unsigned char *lpDelete(unsigned char *lp, unsigned char *p, unsigned char **newp);
 uint32_t lpLength(unsigned char *lp);

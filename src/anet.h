@@ -39,7 +39,7 @@
 
 /* Flags used with certain functions. */
 #define ANET_NONE 0
-#define ANET_IP_ONLY (1<<0)
+#define ANET_IP_ONLY (1 << 0)
 
 #if defined(__sun) || defined(_AIX)
 #define AF_LOCAL AF_UNIX
@@ -54,7 +54,8 @@
 #define FD_TO_SOCK_NAME 1
 
 int anetTcpNonBlockConnect(char *err, const char *addr, int port);
-int anetTcpNonBlockBestEffortBindConnect(char *err, const char *addr, int port, const char *source_addr);
+int anetTcpNonBlockBestEffortBindConnect(char *err, const char *addr, int port,
+                                         const char *source_addr);
 int anetResolve(char *err, char *host, char *ipbuf, size_t ipbuf_len, int flags);
 int anetTcpServer(char *err, int port, char *bindaddr, int backlog);
 int anetTcp6Server(char *err, int port, char *bindaddr, int backlog);

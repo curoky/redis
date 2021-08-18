@@ -33,30 +33,31 @@
 
 #ifndef _WIN32
 /* For POSIX systems we use the standard BSD socket API. */
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/select.h>
-#include <sys/un.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <poll.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <unistd.h>
 #else
 /* For Windows we use winsock. */
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0600 /* To get WSAPoll etc. */
+#include <errno.h>
+#include <stddef.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <stddef.h>
-#include <errno.h>
 
 #ifdef _MSC_VER
 typedef long long ssize_t;
 #endif
 
 /* Emulate the parts of the BSD socket API that we need (override the winsock signatures). */
-int win32_getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
+int win32_getaddrinfo(const char *node, const char *service, const struct addrinfo *hints,
+                      struct addrinfo **res);
 const char *win32_gai_strerror(int errcode);
 void win32_freeaddrinfo(struct addrinfo *res);
 SOCKET win32_socket(int domain, int type, int protocol);
@@ -80,8 +81,10 @@ int win32_poll(struct pollfd *fds, nfds_t nfds, int timeout);
 #define ioctl(fd, request, argp) win32_ioctl(fd, request, argp)
 #define bind(sockfd, addr, addrlen) win32_bind(sockfd, addr, addrlen)
 #define connect(sockfd, addr, addrlen) win32_connect(sockfd, addr, addrlen)
-#define getsockopt(sockfd, level, optname, optval, optlen) win32_getsockopt(sockfd, level, optname, optval, optlen)
-#define setsockopt(sockfd, level, optname, optval, optlen) win32_setsockopt(sockfd, level, optname, optval, optlen)
+#define getsockopt(sockfd, level, optname, optval, optlen) \
+  win32_getsockopt(sockfd, level, optname, optval, optlen)
+#define setsockopt(sockfd, level, optname, optval, optlen) \
+  win32_setsockopt(sockfd, level, optname, optval, optlen)
 #define close(fd) win32_close(fd)
 #define recv(sockfd, buf, len, flags) win32_recv(sockfd, buf, len, flags)
 #define send(sockfd, buf, len, flags) win32_send(sockfd, buf, len, flags)
