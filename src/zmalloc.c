@@ -48,6 +48,7 @@ void zlibc_free(void *ptr) { free(ptr); }
 #include "zmalloc.h"
 
 #ifdef HAVE_MALLOC_SIZE
+// QM: 为什么会有 PREFIX_SIZE 需求?
 #define PREFIX_SIZE (0)
 #define ASSERT_NO_SIZE_OVERFLOW(sz)
 #else
@@ -96,10 +97,12 @@ static void (*zmalloc_oom_handler)(size_t) = zmalloc_default_oom;
  * '*usable' is set to the usable size if non NULL. */
 void *ztrymalloc_usable(size_t size, size_t *usable) {
   ASSERT_NO_SIZE_OVERFLOW(size);
+  // QM: 这里 PREFIX_SIZE 具体是多少
   void *ptr = malloc(MALLOC_MIN_SIZE(size) + PREFIX_SIZE);
 
   if (!ptr) return NULL;
 #ifdef HAVE_MALLOC_SIZE
+  // QM: 这里拿到的 size 可能会因为内存对齐而稍大一些
   size = zmalloc_size(ptr);
   update_zmalloc_stat_alloc(size);
   if (usable) *usable = size;
@@ -490,6 +493,7 @@ void set_jemalloc_bg_thread(int enable) {
   /* let jemalloc do purging asynchronously, required when there's no traffic
    * after flushdb */
   char val = !!enable;
+  // QM: 这里优化的是什么?
   je_mallctl("background_thread", NULL, 0, &val, 1);
 }
 

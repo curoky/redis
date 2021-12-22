@@ -155,6 +155,7 @@ static unsigned char *zipmapLookupRaw(unsigned char *zm, unsigned char *key, uns
       /* Only return when the user doesn't care
        * for the total length of the zipmap. */
       if (totlen != NULL) {
+        // QM: 这里为什么不 break 呢? 因为这里想获取总长度。
         k = p;
       } else {
         return p;
@@ -226,6 +227,7 @@ unsigned char *zipmapSet(unsigned char *zm, unsigned char *key, unsigned int kle
   p = zipmapLookupRaw(zm, key, klen, &zmlen);
   if (p == NULL) {
     /* Key not found: enlarge */
+    // QM: 这里直接重新申请内存了, 如果原位置不能重新分配, 会发生copy
     zm = zipmapResize(zm, zmlen + reqlen);
     p = zm + zmlen - 1;
     zmlen = zmlen + reqlen;
@@ -237,6 +239,7 @@ unsigned char *zipmapSet(unsigned char *zm, unsigned char *key, unsigned int kle
     /* Compute the total length: */
     if (update) *update = 1;
     freelen = zipmapRawEntryLength(p);
+    // QM: 已经使用的内存+空闲的尾部内存都不足以承载更新后的value
     if (freelen < reqlen) {
       /* Store the offset of this key within the current zipmap, so
        * it can be resized. Then, move the tail backwards so this
